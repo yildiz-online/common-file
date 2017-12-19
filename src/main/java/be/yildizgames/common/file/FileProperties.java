@@ -44,7 +44,7 @@ public class FileProperties {
      */
     //@Requires ("file != null")
     //@Ensures ("result != null")
-    static Properties getPropertiesFromFile(final File file, final String... args) {
+    public static Properties getPropertiesFromFile(final File file, final String... args) {
         final Properties properties = new Properties();
         try (Reader reader = ResourceUtil.getFileReader(file)) {
             properties.load(reader);
@@ -75,7 +75,7 @@ public class FileProperties {
     //@Requires ("p != null")
     //@Requires ("f != null")
     //@Requires ("f.exists() == true")
-    static void save(final Properties p, final File f) {
+    public static void save(final Properties p, final File f) {
         try {
             if (f.getParentFile() != null && !f.getParentFile().exists()) {
                 f.getParentFile().mkdirs();
