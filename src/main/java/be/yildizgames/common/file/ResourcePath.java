@@ -23,6 +23,8 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.util.StringUtil;
+
 import java.io.File;
 
 /**
@@ -52,6 +54,14 @@ public class ResourcePath {
 
     public static ResourcePath directory(String name, String path) {
         return new ResourcePath(name, path, FileResource.FileType.DIRECTORY);
+    }
+
+    public static ResourcePath currentDirectory(String name) {
+        return new ResourcePath(name, new File("").getAbsolutePath(), FileResource.FileType.DIRECTORY);
+    }
+
+    public static ResourcePath currentDirectory() {
+        return currentDirectory(StringUtil.buildRandomString("resourcePath"));
     }
 
     public final String getName() {
