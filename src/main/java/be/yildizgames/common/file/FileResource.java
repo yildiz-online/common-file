@@ -76,9 +76,8 @@ public final class FileResource {
     }
 
     public static FileResource createFileResource(final String name, final FileType type) {
-        if(type == null) {
-            throw new IllegalArgumentException("Type cannot be null.");
-        }
+        assert name != null;
+        assert type != null;
         FileResource resource = new FileResource();
         String sanitizedName = null;
         try {
@@ -106,6 +105,7 @@ public final class FileResource {
     }
 
     public static FileResource findResource(final String name) {
+        assert name != null;
         FileResource resource = new FileResource();
         String sanitizedName = null;
         try {
