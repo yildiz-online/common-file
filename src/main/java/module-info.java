@@ -21,29 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  SOFTWARE.
  */
 
-package be.yildizgames.common.file.xml;
+module be.yildizgames.common.file {
+    requires be.yildizgames.common.exception;
+    requires be.yildizgames.common.util;
 
-import java.security.InvalidParameterException;
-
-/**
- * @author Grégory Van den Borre
- */
-public abstract class XMLTag {
-
-    private final String name;
-
-    protected XMLTag(final String name) {
-        super();
-        if (name.contains("<") || name.contains(">") || name.contains("&") || name.contains("\"") || name.contains("'")) {
-            throw new InvalidParameterException(name + "contains XML forbidden character(<,>,&,\",'");
-        }
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public abstract String generate(final StringBuilder builder);
-
+    exports be.yildizgames.common.file;
 }
