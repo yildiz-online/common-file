@@ -82,7 +82,8 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> FileResource.createFile((Path)null));
+            //FIXME replace with implementatiop exception
+            assertThrows(NullPointerException.class, () -> FileResource.createFile((Path)null));
         }
 
         @Test
@@ -112,7 +113,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> FileResource.createDirectory((Path)null));
+            assertThrows(NullPointerException.class, () -> FileResource.createDirectory((Path)null));
         }
 
         @Test
@@ -153,7 +154,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNullName() {
-            assertThrows(AssertionError.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
+            assertThrows(NullPointerException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
         }
 
         @Test
