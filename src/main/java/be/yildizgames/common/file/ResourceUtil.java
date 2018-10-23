@@ -23,8 +23,13 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.technical.ResourceCorruptedException;
+
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,8 +68,19 @@ public final class ResourceUtil {
      *
      * @param path Path of the file to read.
      * @return An input stream reader to read the file.
-     * @throws FileNotFoundException If the file is not found.
+     * @throws IOException If the file is not found.
      */
+    public static Reader getFileReader(final Path path) throws IOException {
+        return Files.newBufferedReader(path, ResourceUtil.ENCODING);
+    }
+
+    /**
+     * Get a file reader.
+     * @deprecated Use getFileReader(final Path path) instead.
+     * @param path Path of the file to read.
+     * @return An input stream reader to read the file.
+     */
+    @Deprecated(since = "1.0.2", forRemoval = true)
     public static Reader getFileReader(final File path) throws FileNotFoundException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(path), ResourceUtil.ENCODING));
     }
@@ -74,8 +90,21 @@ public final class ResourceUtil {
      *
      * @param path Path of the file to write.
      * @return An output stream writer to write the file.
+     * @throws IOException If the file is not found.
+     */
+    public static Writer getFileWriter(final Path path) throws IOException {
+        return Files.newBufferedWriter(path, ResourceUtil.ENCODING);
+    }
+
+    /**
+     * Get a file writer.
+     * @deprecated Use getFileWriter(final Path path) instead.
+     *
+     * @param path Path of the file to write.
+     * @return An output stream writer to write the file.
      * @throws FileNotFoundException If the file is not found.
      */
+    @Deprecated(since = "1.0.2", forRemoval = true)
     public static Writer getFileWriter(final File path) throws FileNotFoundException {
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), ResourceUtil.ENCODING));
     }
@@ -150,5 +179,14 @@ public final class ResourceUtil {
             return new ArrayList<>();
         }
         return Arrays.asList(files);
+    }
+
+    public static String decode(String string) {
+        //FIXME remove .name() once in java 10+
+        try {
+            return URLDecoder.decode(string, ResourceUtil.ENCODING.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new ResourceCorruptedException(e);
+        }
     }
 }

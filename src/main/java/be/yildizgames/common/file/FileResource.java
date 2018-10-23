@@ -30,12 +30,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -71,20 +70,27 @@ public final class FileResource {
         return createFileResource(name, FileType.FILE);
     }
 
+    public static FileResource createFile(Path path) {
+        return createFileResource(path, FileType.FILE);
+    }
+
     public static FileResource createDirectory(String name) {
         return createFileResource(name, FileType.DIRECTORY);
+    }
+
+    public static FileResource createDirectory(Path directory) {
+        return createFileResource(directory, FileType.DIRECTORY);
+    }
+
+    public static FileResource createFileResource(final Path path, final FileType type) {
+        return createFileResource(path.toAbsolutePath().toString(), type);
     }
 
     public static FileResource createFileResource(final String name, final FileType type) {
         assert name != null;
         assert type != null;
         FileResource resource = new FileResource();
-        String sanitizedName = null;
-        try {
-            sanitizedName = URLDecoder.decode(name, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ResourceCorruptedException(e);
-        }
+        String sanitizedName = ResourceUtil.decode(name);
         resource.name = sanitizedName;
         resource.file = new File(sanitizedName);
         resource.size = resource.file.length();
@@ -107,12 +113,7 @@ public final class FileResource {
     public static FileResource findResource(final String name) {
         assert name != null;
         FileResource resource = new FileResource();
-        String sanitizedName = null;
-        try {
-            sanitizedName = URLDecoder.decode(name, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        String sanitizedName = ResourceUtil.decode(name);
         resource.file = new File(sanitizedName);
         resource.name = sanitizedName;
         if (!resource.exists()) {
@@ -284,10 +285,25 @@ public final class FileResource {
     /**
      * List all files contained in this folder.
      *
+     * @param toIgnore If the file name contains this value, it will be ignored.
+     * @throws IOException If an exception occurs during the search.
+     * @return The list of found files.
+     */
+    public List<FileResource> listFile(final String... toIgnore) throws IOException {
+        List<FileResource> files = new ArrayList<>();
+        this.listFile(files, toIgnore);
+        return files;
+    }
+
+    /**
+     * List all files contained in this folder.
+     *
      * @param files    List to fill with result.
      * @param toIgnore If the file name contains this value, it will be ignored.
      * @throws IOException If an exception occurs during the search.
+     * @deprecated This function is replaced by List<FileResource> listFile(final String... toIgnore), and will be internal.
      */
+    @Deprecated(since = "1.0.2", forRemoval = true)
     public void listFile(final List<FileResource> files, final String... toIgnore) throws IOException {
         Path folder = Paths.get(this.getName());
         DirectoryStream.Filter<Path> filter = entry -> {

@@ -32,14 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for FileResource.
@@ -86,7 +82,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> FileResource.createFile(null));
+            assertThrows(AssertionError.class, () -> FileResource.createFile((Path)null));
         }
 
         @Test
@@ -116,7 +112,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> FileResource.createDirectory(null));
+            assertThrows(AssertionError.class, () -> FileResource.createDirectory((Path)null));
         }
 
         @Test
@@ -157,7 +153,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNullName() {
-            assertThrows(AssertionError.class, () -> FileResource.createFileResource(null, FileResource.FileType.FILE));
+            assertThrows(AssertionError.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
         }
 
         @Test
@@ -173,8 +169,7 @@ final class  FileResourceTest {
         void happyFlow() throws IOException{
             String file = getFile("fileresource-listfiles").getAbsolutePath();
             FileResource f = FileResource.findResource(file);
-            List<FileResource> result = new ArrayList<>();
-            f.listFile(result);
+            List<FileResource> result = f.listFile();
             assertEquals(2, result.size());
             List<String> names = result.stream()
                     .map(FileResource::getName)
@@ -187,8 +182,7 @@ final class  FileResourceTest {
         void withIgnoredFile() throws IOException {
             String file = getFile("fileresource-listfiles").getAbsolutePath();
             FileResource f = FileResource.findResource(file);
-            List<FileResource> result = new ArrayList<>();
-            f.listFile(result, "file1.txt");
+            List<FileResource> result = f.listFile( "file1.txt");
             assertEquals(1, result.size());
             assertEquals(file + File.separator + "file2.txt", result.get(0).getName());
         }
