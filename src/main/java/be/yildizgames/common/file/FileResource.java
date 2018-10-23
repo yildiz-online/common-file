@@ -301,7 +301,7 @@ public final class FileResource {
      * @param files    List to fill with result.
      * @param toIgnore If the file name contains this value, it will be ignored.
      * @throws IOException If an exception occurs during the search.
-     * @deprecated This function is replaced by List<FileResource> listFile(final String... toIgnore), and will be internal.
+     * @deprecated This function is replaced by List &lt FileResource &lt listFile(final String... toIgnore), and will be internal.
      */
     @Deprecated(since = "1.0.2", forRemoval = true)
     public void listFile(final List<FileResource> files, final String... toIgnore) throws IOException {
