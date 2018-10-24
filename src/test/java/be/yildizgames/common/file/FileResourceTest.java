@@ -25,13 +25,15 @@
 package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.technical.ResourceMissingException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class  FileResourceTest {
 
-    private static File getFile(String name) {
-        return new File(FileResourceTest.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile();
+    private static Path getFile(String name) {
+        return Paths.get(FileResourceTest.class.getClassLoader().getResource(name).getFile()).toAbsolutePath();
     }
 
     @Nested
@@ -53,7 +55,7 @@ final class  FileResourceTest {
 
         @Test
         void happyFlow() {
-            FileResource.findResource(getFile("file with space.txt").getAbsolutePath());
+            FileResource.findResource(getFile("file with space.txt").toString());
         }
 
         @Test
@@ -73,11 +75,11 @@ final class  FileResourceTest {
         @Test
         void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String file = folder.toFile().getAbsolutePath() + "/test.txt";
-            assertFalse(new File(file).exists());
+            Path file = folder.resolve("test.txt");
+            assertFalse(Files.exists(file));
             FileResource.createFile(file);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isFile());
+            assertTrue(Files.exists(file));
+            assertTrue(Files.isRegularFile(file));
         }
 
         @Test
@@ -87,13 +89,13 @@ final class  FileResourceTest {
         }
 
         @Test
-        void alreadyExisting() {
-            String file = getFile("test-resource.txt").getAbsolutePath();
-            assertTrue(new File(file).exists());
-            long size = new File(file).length();
+        void alreadyExisting() throws IOException {
+            Path file = getFile("test-resource.txt");
+            assertTrue(Files.exists(file));
+            long size = Files.size(file);
             FileResource f = FileResource.createFile(file);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isFile());
+            assertTrue(Files.exists(file));
+            assertTrue(Files.isRegularFile(file));
             assertEquals(size, f.getSize());
         }
     }
@@ -104,11 +106,11 @@ final class  FileResourceTest {
         @Test
         void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String file = folder.toFile().getAbsolutePath() + "/test";
-            assertFalse(new File(file).exists());
+            Path file = folder.resolve("test");
+            assertFalse(Files.exists(file));
             FileResource.createDirectory(file);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isDirectory());
+            assertTrue(Files.exists(file));
+            assertTrue(Files.isDirectory(file));
         }
 
         @Test
@@ -119,11 +121,10 @@ final class  FileResourceTest {
         @Test
         void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String file = folder.toFile().getAbsolutePath() + "/";
-            assertTrue(new File(file).exists());
-            FileResource.createDirectory(file);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isDirectory());
+            assertTrue(Files.exists(folder));
+            FileResource.createDirectory(folder);
+            assertTrue(Files.exists(folder));
+            assertTrue(Files.isDirectory(folder));
         }
     }
 
@@ -131,25 +132,24 @@ final class  FileResourceTest {
     class createResource {
 
         @Test
-        void file() {
-            String file = getFile("test-resource.txt").getAbsolutePath();
-            assertTrue(new File(file).exists());
-            long size = new File(file).length();
+        void file() throws IOException {
+            Path file = getFile("test-resource.txt");
+            assertTrue(Files.exists(file));
+            long size = Files.size(file);
             FileResource f = FileResource.createFileResource(file, FileResource.FileType.FILE);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isFile());
+            assertTrue(Files.exists(file));
+            assertTrue(Files.isRegularFile(file));
             assertEquals(size, f.getSize());
         }
 
         @Test
         void directory() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            String file = path + "/test";
-            assertFalse(new File(file).exists());
+            Path file = folder.resolve("test");
+            assertFalse(Files.exists(file));
             FileResource.createFileResource(file, FileResource.FileType.DIRECTORY);
-            assertTrue(new File(file).exists());
-            assertTrue(new File(file).isDirectory());
+            assertTrue(Files.exists(file));
+            assertTrue(Files.isDirectory(file));
         }
 
         @Test
@@ -168,24 +168,37 @@ final class  FileResourceTest {
 
         @Test
         void happyFlow() throws IOException{
-            String file = getFile("fileresource-listfiles").getAbsolutePath();
-            FileResource f = FileResource.findResource(file);
+            Path file = getFile("fileresource-listfiles");
+            FileResource f = FileResource.findResource(file.toString());
             List<FileResource> result = f.listFile();
             assertEquals(2, result.size());
             List<String> names = result.stream()
                     .map(FileResource::getName)
                     .collect(Collectors.toList());
-            assertTrue(names.contains(file + File.separator + "file1.txt")
-                    && names.contains(file + File.separator + "file2.txt"));
+            assertTrue(names.contains(file + FileSystems.getDefault().getSeparator() + "file1.txt")
+                    && names.contains(file + FileSystems.getDefault().getSeparator() + "file2.txt"));
         }
 
         @Test
         void withIgnoredFile() throws IOException {
-            String file = getFile("fileresource-listfiles").getAbsolutePath();
-            FileResource f = FileResource.findResource(file);
+            Path file = getFile("fileresource-listfiles");
+            FileResource f = FileResource.findResource(file.toString());
             List<FileResource> result = f.listFile( "file1.txt");
             assertEquals(1, result.size());
-            assertEquals(file + File.separator + "file2.txt", result.get(0).getName());
+            assertEquals(file + FileSystems.getDefault().getSeparator() + "file2.txt", result.get(0).getName());
         }
+    }
+
+    @Nested
+    class FileTypeEnum {
+
+        @Test
+        void happyFlow() {
+            Assertions.assertEquals(0, FileResource.FileType.FILE.value);
+            Assertions.assertEquals(1, FileResource.FileType.ZIP.value);
+            Assertions.assertEquals(2, FileResource.FileType.VFS.value);
+            Assertions.assertEquals(3, FileResource.FileType.DIRECTORY.value);
+        }
+
     }
 }

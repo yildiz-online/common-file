@@ -74,16 +74,6 @@ public final class ResourceUtil {
         return Files.newBufferedReader(path, ResourceUtil.ENCODING);
     }
 
-    /**
-     * Get a file reader.
-     * @deprecated Use getFileReader(final Path path) instead.
-     * @param path Path of the file to read.
-     * @return An input stream reader to read the file.
-     */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static Reader getFileReader(final File path) throws FileNotFoundException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(path), ResourceUtil.ENCODING));
-    }
 
     /**
      * Get a file writer.
@@ -96,17 +86,8 @@ public final class ResourceUtil {
         return Files.newBufferedWriter(path, ResourceUtil.ENCODING);
     }
 
-    /**
-     * Get a file writer.
-     * @deprecated Use getFileWriter(final Path path) instead.
-     *
-     * @param path Path of the file to write.
-     * @return An output stream writer to write the file.
-     * @throws FileNotFoundException If the file is not found.
-     */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static Writer getFileWriter(final File path) throws FileNotFoundException {
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), ResourceUtil.ENCODING));
+    public static BufferedInputStream getInputStream(Path file) throws IOException {
+        return new BufferedInputStream(Files.newInputStream(file));
     }
 
     /**
@@ -129,6 +110,10 @@ public final class ResourceUtil {
         return ResourceUtil.getString(bos.toByteArray());
     }
 
+    public static void createDirectoryTree(final Path path) {
+        createDirectoryTree(path.toAbsolutePath().toString());
+    }
+
     public static void createDirectoryTree(final String path) {
         assert path!= null : "Path should not be null.";
         File file = new File(path);
@@ -139,6 +124,10 @@ public final class ResourceUtil {
         if(!file.exists() && !file.mkdirs()) {
             throw new FileCreationException("Directories were not created successfully for " + path);
         }
+    }
+
+    public static void createDirectory(final Path path) {
+        createDirectoryTree(path.toAbsolutePath().toString());
     }
 
     public static void createDirectory(final String path) {
@@ -158,6 +147,7 @@ public final class ResourceUtil {
      *
      * @param folder Folder to delete.
      */
+    @Deprecated(since = "1.0.2", forRemoval = true)
     public static void deleteDirectoryTree(final File folder) {
         for (File f : ResourceUtil.listFile(folder)) {
             if (f.isDirectory()) {
@@ -173,6 +163,12 @@ public final class ResourceUtil {
         }
     }
 
+    /**
+     * @deprecated Use Files.walk
+     * @param file
+     * @return
+     */
+    @Deprecated(since = "1.0.2", forRemoval = true)
     public static List<File> listFile(final File file) {
         File[] files = file.listFiles();
         if(files == null) {
@@ -188,5 +184,29 @@ public final class ResourceUtil {
         } catch (UnsupportedEncodingException e) {
             throw new ResourceCorruptedException(e);
         }
+    }
+
+    /**
+     * Get a file reader.
+     * @deprecated Use getFileReader(final Path path) instead.
+     * @param path Path of the file to read.
+     * @return An input stream reader to read the file.
+     */
+    @Deprecated(since = "1.0.2", forRemoval = true)
+    public static Reader getFileReader(final File path) throws FileNotFoundException {
+        return new BufferedReader(new InputStreamReader(new FileInputStream(path), ResourceUtil.ENCODING));
+    }
+
+    /**
+     * Get a file writer.
+     * @deprecated Use getFileWriter(final Path path) instead.
+     *
+     * @param path Path of the file to write.
+     * @return An output stream writer to write the file.
+     * @throws FileNotFoundException If the file is not found.
+     */
+    @Deprecated(since = "1.0.2", forRemoval = true)
+    public static Writer getFileWriter(final File path) throws FileNotFoundException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), ResourceUtil.ENCODING));
     }
 }

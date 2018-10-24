@@ -25,7 +25,8 @@ package be.yildizgames.common.file;
 
 import be.yildizgames.common.util.StringUtil;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author Grégory Van den Borre
@@ -57,7 +58,7 @@ public class ResourcePath {
     }
 
     public static ResourcePath currentDirectory(String name) {
-        return new ResourcePath(name, new File("").getAbsolutePath(), FileResource.FileType.DIRECTORY);
+        return new ResourcePath(name, Paths.get("").toAbsolutePath().toString(), FileResource.FileType.DIRECTORY);
     }
 
     public static ResourcePath currentDirectory() {
@@ -78,6 +79,6 @@ public class ResourcePath {
 
     public boolean exists(String file) {
         assert file != null;
-        return this.type == FileResource.FileType.VFS || new File(this.path + File.separator + file).exists();
+        return this.type == FileResource.FileType.VFS || Files.exists(Paths.get(this.path, file));
     }
 }

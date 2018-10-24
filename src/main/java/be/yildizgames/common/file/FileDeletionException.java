@@ -25,17 +25,33 @@ package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
-class FileDeletionException extends TechnicalException {
+/**
+ * This exception is thrown when a file could not be deleted successfully.
+ */
+public class FileDeletionException extends TechnicalException {
 
-    FileDeletionException(String message, Exception cause) {
+    /**
+     * Build a new deletion exception with a message and an exception cause.
+     * @param message Message for this exception.
+     * @param cause Cause of this exception.
+     */
+    public FileDeletionException(String message, Exception cause) {
         super(message, cause);
     }
 
-    FileDeletionException(Exception cause) {
+    /**
+     * Build a new deletion exception with an exception cause.
+     * @param cause Cause of this exception.
+     */
+    public FileDeletionException(Exception cause) {
         super(cause);
     }
 
-    FileDeletionException(String s) {
-        super(s);
+    /**
+     * Build a new deletion exception with a message.
+     * @param message Message for this exception.
+     */
+    public FileDeletionException(String message) {
+        super(message);
     }
 }

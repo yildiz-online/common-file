@@ -27,8 +27,6 @@ import be.yildizgames.common.exception.technical.ResourceCorruptedException;
 import be.yildizgames.common.exception.technical.ResourceMissingException;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -39,6 +37,7 @@ import java.util.List;
 import java.util.zip.CRC32;
 
 /**
+ * A file resource represent a file and provide functions to manipulate it.
  * @author Grégory Van den Borre
  */
 public final class FileResource {
@@ -46,7 +45,8 @@ public final class FileResource {
     /**
      * Associated File object.
      */
-    private File file;
+    private Path file;
+
     /**
      * Path and name of the file.
      */
@@ -58,10 +58,8 @@ public final class FileResource {
     private long crc32;
 
     /**
-     * File size.
+     * Create a new empty object, private to prevent usage.
      */
-    private long size;
-
     private FileResource() {
         super();
     }
@@ -92,20 +90,20 @@ public final class FileResource {
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
         resource.name = sanitizedName;
-        resource.file = new File(sanitizedName);
-        resource.size = resource.file.length();
+        resource.file = Paths.get(sanitizedName);
         if (resource.exists()) {
             return resource;
         }
         try {
-            resource.file.getParentFile().mkdirs();
-            if (type == FileType.DIRECTORY && !resource.file.mkdir()) {
-                throw new ResourceMissingException("File " + sanitizedName + " could not be created");
-            } else if (type == FileType.FILE && !resource.file.createNewFile()) {
-                throw new ResourceMissingException("Directory " + sanitizedName + " could not be created");
+            Files.createDirectories(resource.file.getParent());
+            if (type == FileType.DIRECTORY) {
+                Files.createDirectories(resource.file);
+            } else if (type == FileType.FILE) {
+                Files.createDirectories(resource.file.getParent());
+                Files.createFile(resource.file);
             }
         } catch (IOException | SecurityException e) {
-            throw new ResourceMissingException("The file " + resource.file.getAbsolutePath() + " could not be created.", e);
+            throw new ResourceMissingException("The file " + resource.file.toAbsolutePath().toString() + " could not be created.", e);
         }
         return resource;
     }
@@ -114,12 +112,11 @@ public final class FileResource {
         assert name != null;
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
-        resource.file = new File(sanitizedName);
+        resource.file = Paths.get(sanitizedName);
         resource.name = sanitizedName;
         if (!resource.exists()) {
-            throw new ResourceMissingException("The file " + resource.file.getAbsolutePath() + " does not exist.");
+            throw new ResourceMissingException("The file " + resource.file.toAbsolutePath().toString() + " does not exist.");
         }
-        resource.size = resource.file.length();
         return resource;
     }
 
@@ -139,7 +136,7 @@ public final class FileResource {
         long expectedSize = Long.parseLong(values[2]);
         if (!this.exists()) {
             throw new ResourceMissingException("File does not exists");
-        } else if (this.size != expectedSize) {
+        } else if (this.getSize() != expectedSize) {
             throw new ResourceCorruptedException("Size does not match");
         } else if (this.crc32 != expectedCrc) {
             throw new ResourceCorruptedException("Crc32 does not match");
@@ -160,20 +157,134 @@ public final class FileResource {
     /**
      * Delete the file on the hard disk and reset all attributes in this object.
      */
-    public void deleteFile() {
-        if (this.file.delete()) {
-            this.name = "";
-            this.crc32 = 0;
-            this.size = 0;
+    public void deleteFile() throws IOException{
+        Files.delete(this.file);
+        this.name = "";
+        this.crc32 = 0;
+    }
+
+    /**
+     * @return This file name.
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * @return The size of this file.
+     */
+    public long getSize() {
+        try {
+            return Files.size(this.file);
+        } catch (IOException e) {
+            return 0L;
+        }
+
+    }
+
+    /**
+     * Check if the file is present on the hard disk.
+     *
+     * @return True if the file exists.
+     */
+    public boolean exists() {
+        return Files.exists(this.file);
+    }
+
+    /**
+     * Get the file absolute path.
+     *
+     * @return The file absolute path.
+     */
+    public String getAbsolutePath() {
+        return this.file.toAbsolutePath().toString();
+    }
+
+    /**
+     * Build a byte[] from the file wrapped in this object.
+     *
+     * @return the byte[] if not problem occurred, null otherwise.
+     */
+    public byte[] getBytesFromFile() {
+        try (BufferedInputStream is = ResourceUtil.getInputStream(this.file)) {
+            if (this.getSize() > Integer.MAX_VALUE) {
+                throw new ResourceCorruptedException("File too large");
+            }
+
+            byte[] bytes = new byte[(int) this.getSize()];
+            int offset = 0;
+            int numRead;
+            while (true) {
+                numRead = is.read(bytes, offset, bytes.length - offset);
+                if (offset < bytes.length && numRead >= 0) {
+                    offset += numRead;
+                } else {
+                    break;
+                }
+            }
+
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file " + this.file.toString());
+            }
+            return bytes;
+        } catch (IOException e) {
+            throw new ResourceCorruptedException(e);
         }
     }
 
-    public String getName() {
-        return name;
+    /**
+     * @return The file crc32.
+     */
+    public long getCrc32() {
+        if (this.crc32 == 0) {
+            return this.computeCrc();
+        }
+        return this.crc32;
     }
 
-    public long getSize() {
-        return size;
+    /**
+     * List all files contained in this folder.
+     *
+     * @param toIgnore If the file name contains this value, it will be ignored.
+     * @throws IOException If an exception occurs during the search.
+     * @return The list of found files.
+     */
+    public List<FileResource> listFile(final String... toIgnore) throws IOException {
+        List<FileResource> files = new ArrayList<>();
+        this.listFile(files, toIgnore);
+        return files;
+    }
+
+    /**
+     * Rename the file or move it if the path is changed. This only work if the
+     * new name is in the same physical drive.
+     *
+     * @param newName New name and path of the file.
+     * @return True if completed successfully.
+     */
+    public boolean rename(final String newName) {
+        try {
+            Path newFile = Paths.get(newName).toAbsolutePath();
+            Files.createDirectories(newFile.getParent());
+            Files.move(this.file, newFile);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result;
+        int value = 0;
+        if (this.name != null) {
+            value = this.unifyName(this.name).hashCode();
+        }
+        result = prime * result + value;
+        result = prime * result;
+        return result;
     }
 
     /**
@@ -204,95 +315,22 @@ public final class FileResource {
                 return false;
             }
         }
-        return this.size == other.size;
-    }
-
-    /**
-     * Check if the file is present on the hard disk.
-     *
-     * @return True if the file exists.
-     */
-    public boolean exists() {
-        return this.file.exists();
-    }
-
-    /**
-     * Get the file absolute path.
-     *
-     * @return The file absolute path.
-     */
-    public String getAbsolutePath() {
-        return this.file.getAbsolutePath();
-    }
-
-    /**
-     * Build a byte[] from the file wrapped in this object.
-     *
-     * @return the byte[] if not problem occurred, null otherwise.
-     */
-    public byte[] getBytesFromFile() {
-        try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(this.file))) {
-
-            if (this.size > Integer.MAX_VALUE) {
-                throw new ResourceCorruptedException("File too large");
-            }
-
-            byte[] bytes = new byte[(int) this.size];
-            int offset = 0;
-            int numRead;
-            while (true) {
-                numRead = is.read(bytes, offset, bytes.length - offset);
-                if (offset < bytes.length && numRead >= 0) {
-                    offset += numRead;
-                } else {
-                    break;
-                }
-            }
-
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + this.file.getName());
-            }
-            return bytes;
-        } catch (IOException e) {
-            throw new ResourceCorruptedException(e);
-        }
-    }
-
-    /**
-     * @return The file crc32.
-     */
-    public long getCrc32() {
-        if (this.crc32 == 0) {
-            return this.computeCrc();
-        }
-        return this.crc32;
+        return this.getSize() == other.getSize();
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result;
-        int value = 0;
-        if (this.name != null) {
-            value = this.unifyName(this.name).hashCode();
-        }
-        result = prime * result + value;
-        result = prime * result;
-        return result;
+    public String toString() {
+        return this.name + "_" + this.crc32 + "_" + this.getSize();
     }
 
     /**
-     * List all files contained in this folder.
+     * Remove OS dependent path char from the file name.
      *
-     * @param toIgnore If the file name contains this value, it will be ignored.
-     * @throws IOException If an exception occurs during the search.
-     * @return The list of found files.
+     * @param toUnify File name.
+     * @return The name with all '\\' and '/' char removed.
      */
-    public List<FileResource> listFile(final String... toIgnore) throws IOException {
-        List<FileResource> files = new ArrayList<>();
-        this.listFile(files, toIgnore);
-        return files;
+    private String unifyName(final String toUnify) {
+        return toUnify.contains("\\") ? toUnify.replace("\\", "") : toUnify.replace("/", "");
     }
 
     /**
@@ -326,33 +364,6 @@ public final class FileResource {
                 }
             }
         }
-    }
-
-    /**
-     * Rename the file or move it if the path is changed. This only work if the
-     * new name is in the same physical drive.
-     *
-     * @param newName New name and path of the file.
-     * @return True if completed successfully.
-     */
-    public boolean rename(final String newName) {
-        File f = new File(newName);
-        return !(f.getParentFile() != null && !f.getParentFile().mkdirs()) && this.file.renameTo(f);
-    }
-
-    @Override
-    public String toString() {
-        return this.name + "_" + this.crc32 + "_" + this.size;
-    }
-
-    /**
-     * Remove OS dependent path char from the file name.
-     *
-     * @param toUnify File name.
-     * @return The name with all '\\' and '/' char removed.
-     */
-    private String unifyName(final String toUnify) {
-        return toUnify.contains("\\") ? toUnify.replace("\\", "") : toUnify.replace("/", "");
     }
 
     public enum FileType {

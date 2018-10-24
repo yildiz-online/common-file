@@ -26,32 +26,32 @@ package be.yildizgames.common.file;
 import be.yildizgames.common.exception.technical.TechnicalException;
 
 /**
- * This exception is thrown when a file could not be created successfully.
+ * This exception is thrown when a file is missing.
  */
-public class FileCreationException extends TechnicalException {
+public class FileMissingException extends TechnicalException {
 
     /**
-     * Build a new creation exception with a message and an exception cause.
+     * Build a new missing exception with a message and an exception cause.
      * @param message Message for this exception.
      * @param cause Cause of this exception.
      */
-    public FileCreationException(String message, Exception cause) {
+    public FileMissingException(String message, Exception cause) {
         super(message, cause);
     }
 
     /**
-     * Build a new creation exception with an exception cause.
+     * Build a new missing exception with an exception cause.
      * @param cause Cause of this exception.
      */
-    public FileCreationException(Exception cause) {
+    public FileMissingException(Exception cause) {
         super(cause);
     }
 
     /**
-     * Build a new creation exception with a message.
+     * Build a new missing exception with a message.
      * @param message Message for this exception.
      */
-    public FileCreationException(String message) {
+    public FileMissingException(String message) {
         super(message);
     }
 }

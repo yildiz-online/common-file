@@ -28,7 +28,6 @@ package be.yildizgames.common.file;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,39 +46,39 @@ class ResourceUtilTest {
         @Test
         void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectoryTree(path + "test/dir");
-            assertTrue(new File(path + "test/dir").exists());
+            Path folderToTest = folder.resolve("test").resolve("dir");
+            ResourceUtil.createDirectoryTree(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withSpace() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectoryTree(path + "tes t/dir");
-            assertTrue(new File(path + "tes t/dir").exists());
+            Path folderToTest = folder.resolve("tes t").resolve("dir");
+            ResourceUtil.createDirectoryTree(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withDot() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectoryTree(path + "te.st/dir");
-            assertTrue(new File(path + "te.st/dir").exists());
+            Path folderToTest = folder.resolve("te.st").resolve("dir");
+            ResourceUtil.createDirectoryTree(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectoryTree(path + "test/exist");
-            ResourceUtil.createDirectoryTree(path + "test/exist");
-            assertTrue(new File(path + "test/exist").exists());
+            Path folderToTest = folder.resolve("test").resolve("exist");
+            ResourceUtil.createDirectoryTree(folderToTest);
+            ResourceUtil.createDirectoryTree(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withNull() {
-            assertThrows(AssertionError.class, () -> ResourceUtil.createDirectoryTree(null));
+            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectoryTree((Path)null));
         }
     }
 
@@ -89,43 +88,39 @@ class ResourceUtilTest {
         @Test
         void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectory(path + "test");
-            assertTrue(new File(path + "test").exists());
+            Path folderToTest = folder.resolve("test");
+            ResourceUtil.createDirectory(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withSpace() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectory(path + "tes t");
-            assertTrue(new File(path + "tes t").exists());
+            Path folderToTest = folder.resolve("tes t");
+            ResourceUtil.createDirectory(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withDot() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectory(path + "te.st");
-            assertTrue(new File(path + "te.st").exists());
+            Path folderToTest = folder.resolve("te.st");
+            ResourceUtil.createDirectory(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
-            String path = folder.toFile().getAbsolutePath() + "/";
-            ResourceUtil.createDirectory(path + "exist");
-            ResourceUtil.createDirectory(path + "exist");
-            assertTrue(new File(path + "exist").exists());
+            Path folderToTest = folder.resolve("exists");
+            ResourceUtil.createDirectory(folderToTest);
+            ResourceUtil.createDirectory(folderToTest);
+            assertTrue(Files.exists(folderToTest));
         }
 
         @Test
         void withNull() {
-            assertThrows(AssertionError.class, () -> ResourceUtil.createDirectory(null));
+            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectory((Path)null));
         }
-    }
-
-    private static File getFile(String name) {
-        return new File(ResourceUtil.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile();
     }
 }

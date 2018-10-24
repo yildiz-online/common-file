@@ -20,38 +20,10 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  SOFTWARE.
  */
-
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.technical.TechnicalException;
-
 /**
- * This exception is thrown when a file could not be created successfully.
+ * @author Grégory Van den Borre
  */
-public class FileCreationException extends TechnicalException {
-
-    /**
-     * Build a new creation exception with a message and an exception cause.
-     * @param message Message for this exception.
-     * @param cause Cause of this exception.
-     */
-    public FileCreationException(String message, Exception cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Build a new creation exception with an exception cause.
-     * @param cause Cause of this exception.
-     */
-    public FileCreationException(Exception cause) {
-        super(cause);
-    }
-
-    /**
-     * Build a new creation exception with a message.
-     * @param message Message for this exception.
-     */
-    public FileCreationException(String message) {
-        super(message);
-    }
+class FilePropertiesTest {
 }
