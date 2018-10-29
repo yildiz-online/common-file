@@ -118,8 +118,7 @@ public final class ResourceUtil {
         assert path!= null : "Path should not be null.";
         File file = new File(path);
         if(file.exists() && !file.isDirectory()) {
-            throw new FileCreationException("Directory was not created successfully for " + path
-                    + ", a file with same name already exists.");
+            throw FileCreationException.directoryErrorFileAlreadyExists(path);
         }
         if(!file.exists() && !file.mkdirs()) {
             throw new FileCreationException("Directories were not created successfully for " + path);
@@ -134,8 +133,7 @@ public final class ResourceUtil {
         assert path!= null : "Path should not be null.";
         File file = new File(path);
         if(file.exists() && !file.isDirectory()) {
-            throw new FileCreationException("Directory was not created successfully for " + path
-                    + ", a file with same name already exists.");
+            throw FileCreationException.directoryErrorFileAlreadyExists(path);
         }
         if(!file.exists() && !file.mkdir()) {
             throw new FileCreationException("Directory was not created successfully for " + path);

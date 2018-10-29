@@ -36,6 +36,13 @@ import java.util.Properties;
 public class FileProperties {
 
     /**
+     * Private constructor to prevent instantiation.
+     */
+    private FileProperties() {
+        super();
+    }
+
+    /**
      * Get a property object from a file, and override the values retrieved with the one from args parameter.
      * This is typically to be used with the main method.
      *

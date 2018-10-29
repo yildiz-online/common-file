@@ -54,4 +54,9 @@ public class FileCreationException extends TechnicalException {
     public FileCreationException(String message) {
         super(message);
     }
+
+    public static FileCreationException directoryErrorFileAlreadyExists(String path) {
+        return new FileCreationException("Directory was not created successfully for " + path
+                + ", a file with same name already exists.");
+    }
 }
