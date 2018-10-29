@@ -77,6 +77,10 @@ public class ResourcePath {
         return this.type;
     }
 
+    public boolean exists() {
+        return Files.exists(Paths.get(this.path));
+    }
+
     public boolean exists(String file) {
         assert file != null;
         return this.type == FileResource.FileType.VFS || Files.exists(Paths.get(this.path, file));
