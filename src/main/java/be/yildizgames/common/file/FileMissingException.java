@@ -25,6 +25,8 @@ package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
+import java.nio.file.Path;
+
 /**
  * This exception is thrown when a file is missing.
  */
@@ -53,5 +55,13 @@ public class FileMissingException extends TechnicalException {
      */
     public FileMissingException(String message) {
         super(message);
+    }
+
+    public static FileMissingException notExists(Path path) {
+        return new FileMissingException(path.toAbsolutePath().toString() + " does not exists.");
+    }
+
+    public static FileMissingException notDirectory(Path path) {
+        return new FileMissingException(path.toAbsolutePath().toString() + " is not a directory.");
     }
 }
