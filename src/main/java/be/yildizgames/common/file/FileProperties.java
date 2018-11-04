@@ -42,6 +42,18 @@ public class FileProperties {
         super();
     }
 
+    public static Properties getOrCreatePropertiesFromFile(final Path file, final String... args) {
+        if(Files.notExists(file)) {
+            try {
+                Files.createFile(file);
+            } catch (IOException e) {
+                throw new FileCreationException("Cannot create file " + file.toString());
+            }
+
+        }
+        return getPropertiesFromFile(file, args);
+    }
+
     /**
      * Get a property object from a file, and override the values retrieved with the one from args parameter.
      * This is typically to be used with the main method.
