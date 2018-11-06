@@ -23,6 +23,7 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.implementation.ImplementationException;
 import be.yildizgames.common.exception.technical.ResourceCorruptedException;
 import be.yildizgames.common.exception.technical.ResourceMissingException;
 
@@ -81,12 +82,13 @@ public final class FileResource {
     }
 
     public static FileResource createFileResource(final Path path, final FileType type) {
+        ImplementationException.throwForNull(path);
         return createFileResource(path.toAbsolutePath().toString(), type);
     }
 
     public static FileResource createFileResource(final String name, final FileType type) {
-        assert name != null;
-        assert type != null;
+        ImplementationException.throwForNull(name);
+        ImplementationException.throwForNull(type);
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
         resource.name = sanitizedName;
@@ -109,7 +111,7 @@ public final class FileResource {
     }
 
     public static FileResource findResource(final String name) {
-        assert name != null;
+        ImplementationException.throwForNull(name);
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
         resource.file = Paths.get(sanitizedName);

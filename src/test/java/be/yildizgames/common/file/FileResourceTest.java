@@ -24,6 +24,7 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.implementation.ImplementationException;
 import be.yildizgames.common.exception.technical.ResourceMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
@@ -65,7 +66,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> FileResource.findResource(null));
+            assertThrows(ImplementationException.class, () -> FileResource.findResource(null));
         }
     }
 
@@ -84,8 +85,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            //FIXME replace with implementatiop exception
-            assertThrows(NullPointerException.class, () -> FileResource.createFile((Path)null));
+            assertThrows(ImplementationException.class, () -> FileResource.createFile((Path)null));
         }
 
         @Test
@@ -115,7 +115,7 @@ final class  FileResourceTest {
 
         @Test
         void fromNull() {
-            assertThrows(NullPointerException.class, () -> FileResource.createDirectory((Path)null));
+            assertThrows(ImplementationException.class, () -> FileResource.createDirectory((Path)null));
         }
 
         @Test
@@ -154,12 +154,12 @@ final class  FileResourceTest {
 
         @Test
         void fromNullName() {
-            assertThrows(NullPointerException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
+            assertThrows(ImplementationException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
         }
 
         @Test
         void fromNullType() {
-            assertThrows(AssertionError.class, () -> FileResource.createFileResource("ok", null));
+            assertThrows(ImplementationException.class, () -> FileResource.createFileResource("ok", null));
         }
     }
 
