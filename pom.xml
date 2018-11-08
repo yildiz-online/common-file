@@ -29,7 +29,7 @@
   <url>https://bitbucket.org/yildiz-engine-team/common-file</url>
 
   <artifactId>common-file</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
 
   <packaging>jar</packaging>
   <inceptionYear>2017</inceptionYear>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>be.yildiz-games</groupId>
       <artifactId>common-util</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
