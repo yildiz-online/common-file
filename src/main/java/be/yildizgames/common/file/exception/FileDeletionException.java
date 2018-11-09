@@ -21,47 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  SOFTWARE.
  */
 
-package be.yildizgames.common.file;
+package be.yildizgames.common.file.exception;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
-import java.nio.file.Path;
-
 /**
- * This exception is thrown when a file is missing.
+ * This exception is thrown when a file could not be deleted successfully.
  */
-public class FileMissingException extends TechnicalException {
+public class FileDeletionException extends TechnicalException {
 
     /**
-     * Build a new missing exception with a message and an exception cause.
+     * Build a new deletion exception with a message and an exception cause.
      * @param message Message for this exception.
      * @param cause Cause of this exception.
      */
-    public FileMissingException(String message, Exception cause) {
+    public FileDeletionException(String message, Exception cause) {
         super(message, cause);
     }
 
     /**
-     * Build a new missing exception with an exception cause.
+     * Build a new deletion exception with an exception cause.
      * @param cause Cause of this exception.
      */
-    public FileMissingException(Exception cause) {
+    public FileDeletionException(Exception cause) {
         super(cause);
     }
 
     /**
-     * Build a new missing exception with a message.
+     * Build a new deletion exception with a message.
      * @param message Message for this exception.
      */
-    public FileMissingException(String message) {
+    public FileDeletionException(String message) {
         super(message);
-    }
-
-    public static FileMissingException notExists(Path path) {
-        return new FileMissingException(path.toAbsolutePath().toString() + " does not exists.");
-    }
-
-    public static FileMissingException notDirectory(Path path) {
-        return new FileMissingException(path.toAbsolutePath().toString() + " is not a directory.");
     }
 }

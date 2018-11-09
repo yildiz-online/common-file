@@ -23,6 +23,7 @@
  */
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.file.exception.FileCorruptionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

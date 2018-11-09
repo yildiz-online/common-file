@@ -21,37 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  SOFTWARE.
  */
 
-package be.yildizgames.common.file;
+package be.yildizgames.common.file.exception;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
 /**
- * This exception is thrown when a file is corrupted.
+ * This exception is thrown when a file could not be created successfully.
  */
-public class FileCorruptionException extends TechnicalException {
+public class FileCreationException extends TechnicalException {
 
     /**
-     * Build a new corrupted exception with a message and an exception cause.
+     * Build a new creation exception with a message and an exception cause.
      * @param message Message for this exception.
      * @param cause Cause of this exception.
      */
-    public FileCorruptionException(String message, Exception cause) {
+    public FileCreationException(String message, Exception cause) {
         super(message, cause);
     }
 
     /**
-     * Build a new corrupted exception with an exception cause.
+     * Build a new creation exception with an exception cause.
      * @param cause Cause of this exception.
      */
-    public FileCorruptionException(Exception cause) {
+    public FileCreationException(Exception cause) {
         super(cause);
     }
 
     /**
-     * Build a new corrupted exception with a message.
+     * Build a new creation exception with a message.
      * @param message Message for this exception.
      */
-    public FileCorruptionException(String message) {
+    public FileCreationException(String message) {
         super(message);
+    }
+
+    public static FileCreationException directoryErrorFileAlreadyExists(String path) {
+        return new FileCreationException("Directory was not created successfully for " + path
+                + ", a file with same name already exists.");
     }
 }

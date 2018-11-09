@@ -31,14 +31,17 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for FileResource.
@@ -47,16 +50,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 final class  FileResourceTest {
 
-    private static Path getFile(String name) {
-        return Paths.get(FileResourceTest.class.getClassLoader().getResource(name).getFile()).toAbsolutePath();
-    }
-
     @Nested
     class FindResource {
 
         @Test
-        void happyFlow() {
-            FileResource.findResource(getFile("file with space.txt").toString());
+        void happyFlow() throws URISyntaxException {
+            FileResource.findResource(ResourceUtil.getFileFromClassPath(this.getClass(), "file with space.txt").toString());
         }
 
         @Test
@@ -89,8 +88,8 @@ final class  FileResourceTest {
         }
 
         @Test
-        void alreadyExisting() throws IOException {
-            Path file = getFile("test-resource.txt");
+        void alreadyExisting() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"test-resource.txt");
             assertTrue(Files.exists(file));
             long size = Files.size(file);
             FileResource f = FileResource.createFile(file);
@@ -132,8 +131,8 @@ final class  FileResourceTest {
     class createResource {
 
         @Test
-        void file() throws IOException {
-            Path file = getFile("test-resource.txt");
+        void file() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"test-resource.txt");
             assertTrue(Files.exists(file));
             long size = Files.size(file);
             FileResource f = FileResource.createFileResource(file, FileResource.FileType.FILE);
@@ -167,8 +166,8 @@ final class  FileResourceTest {
     class ListFile {
 
         @Test
-        void happyFlow() throws IOException{
-            Path file = getFile("fileresource-listfiles");
+        void happyFlow() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"fileresource-listfiles");
             FileResource f = FileResource.findResource(file.toString());
             List<FileResource> result = f.listFile();
             assertEquals(2, result.size());
@@ -180,8 +179,8 @@ final class  FileResourceTest {
         }
 
         @Test
-        void withIgnoredFile() throws IOException {
-            Path file = getFile("fileresource-listfiles");
+        void withIgnoredFile() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"fileresource-listfiles");
             FileResource f = FileResource.findResource(file.toString());
             List<FileResource> result = f.listFile( "file1.txt");
             assertEquals(1, result.size());

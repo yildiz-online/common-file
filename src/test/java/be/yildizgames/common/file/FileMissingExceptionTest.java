@@ -23,6 +23,7 @@
  */
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.file.exception.FileMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

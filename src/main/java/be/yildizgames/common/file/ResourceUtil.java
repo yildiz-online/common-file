@@ -23,16 +23,26 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.implementation.ImplementationException;
 import be.yildizgames.common.exception.technical.ResourceCorruptedException;
+import be.yildizgames.common.file.exception.FileCreationException;
+import be.yildizgames.common.file.exception.FileDeletionException;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Provide streams with a platform independent encoding.
@@ -115,13 +125,17 @@ public final class ResourceUtil {
     }
 
     public static void createDirectoryTree(final String path) {
-        assert path!= null : "Path should not be null.";
-        File file = new File(path);
-        if(file.exists() && !file.isDirectory()) {
+        ImplementationException.throwForNull(path);
+        Path file = Paths.get(path);
+        if (Files.exists(file) && !Files.isDirectory(file)) {
             throw FileCreationException.directoryErrorFileAlreadyExists(path);
         }
-        if(!file.exists() && !file.mkdirs()) {
-            throw new FileCreationException("Directories were not created successfully for " + path);
+        if (Files.notExists(file)) {
+            try {
+                Files.createDirectories(file);
+            } catch (IOException e) {
+                throw new FileCreationException("Directories were not created successfully for " + path, e);
+            }
         }
     }
 
@@ -129,14 +143,20 @@ public final class ResourceUtil {
         createDirectoryTree(path.toAbsolutePath().toString());
     }
 
-    public static void createDirectory(final String path) {
-        assert path!= null : "Path should not be null.";
-        File file = new File(path);
-        if(file.exists() && !file.isDirectory()) {
-            throw FileCreationException.directoryErrorFileAlreadyExists(path);
+    private static void deleteDirectoryTree(final File folder) throws IOException {
+        //TODO cleanup, use only NIO api
+        List<File> files = Files.walk(Paths.get(folder.toURI())).map(Path::toFile).collect(Collectors.toList());
+        for (File f : files) {
+            if (f.isDirectory()) {
+                ResourceUtil.deleteDirectoryTree(f);
+            } else {
+                if (!f.delete()) {
+                    throw new FileDeletionException(f.getAbsolutePath() + "has not been deleted properly.");
+                }
+            }
         }
-        if(!file.exists() && !file.mkdir()) {
-            throw new FileCreationException("Directory was not created successfully for " + path);
+        if (!folder.delete()) {
+            throw new FileDeletionException(folder.getAbsolutePath() + "has not been deleted properly.");
         }
     }
 
@@ -145,34 +165,12 @@ public final class ResourceUtil {
      *
      * @param folder Folder to delete.
      */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static void deleteDirectoryTree(final File folder) {
-        for (File f : ResourceUtil.listFile(folder)) {
-            if (f.isDirectory()) {
-                ResourceUtil.deleteDirectoryTree(f);
-            } else {
-                if(!f.delete()) {
-                    throw new FileDeletionException(f.getAbsolutePath() + "has not been deleted properly.");
-                }
-            }
+    public static void deleteDirectoryTree(final Path folder) {
+        try {
+            deleteDirectoryTree(folder.toFile());
+        } catch (IOException e) {
+            throw new FileDeletionException(folder.toAbsolutePath().toString() + "has not been deleted properly.");
         }
-        if(!folder.delete()) {
-            throw new FileDeletionException(folder.getAbsolutePath() + "has not been deleted properly.");
-        }
-    }
-
-    /**
-     * @deprecated Use Files.walk
-     * @param file
-     * @return
-     */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static List<File> listFile(final File file) {
-        File[] files = file.listFiles();
-        if(files == null) {
-            return new ArrayList<>();
-        }
-        return Arrays.asList(files);
     }
 
     public static String decode(String string) {
@@ -184,27 +182,7 @@ public final class ResourceUtil {
         }
     }
 
-    /**
-     * Get a file reader.
-     * @deprecated Use getFileReader(final Path path) instead.
-     * @param path Path of the file to read.
-     * @return An input stream reader to read the file.
-     */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static Reader getFileReader(final File path) throws FileNotFoundException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(path), ResourceUtil.ENCODING));
-    }
-
-    /**
-     * Get a file writer.
-     * @deprecated Use getFileWriter(final Path path) instead.
-     *
-     * @param path Path of the file to write.
-     * @return An output stream writer to write the file.
-     * @throws FileNotFoundException If the file is not found.
-     */
-    @Deprecated(since = "1.0.2", forRemoval = true)
-    public static Writer getFileWriter(final File path) throws FileNotFoundException {
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), ResourceUtil.ENCODING));
+    public static Path getFileFromClassPath(Class clazz, String name) throws URISyntaxException {
+        return Paths.get(clazz.getClassLoader().getResource(name).toURI()).toAbsolutePath();
     }
 }
