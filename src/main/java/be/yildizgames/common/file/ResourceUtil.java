@@ -38,11 +38,13 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Provide streams with a platform independent encoding.
@@ -54,7 +56,7 @@ public final class ResourceUtil {
     /**
      * Encoding to use.
      */
-    private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Private constructor to prevent use.
@@ -145,18 +147,20 @@ public final class ResourceUtil {
 
     private static void deleteDirectoryTree(final File folder) throws IOException {
         //TODO cleanup, use only NIO api
-        List<File> files = Files.walk(Paths.get(folder.toURI())).map(Path::toFile).collect(Collectors.toList());
-        for (File f : files) {
-            if (f.isDirectory()) {
-                ResourceUtil.deleteDirectoryTree(f);
-            } else {
-                if (!f.delete()) {
-                    throw new FileDeletionException(f.getAbsolutePath() + "has not been deleted properly.");
+        try(Stream<Path> path = Files.walk(Paths.get(folder.toURI()))) {
+            List<File> files = path.map(Path::toFile).collect(Collectors.toList());
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    ResourceUtil.deleteDirectoryTree(f);
+                } else {
+                    if (!f.delete()) {
+                        throw new FileDeletionException(f.toPath());
+                    }
                 }
             }
-        }
-        if (!folder.delete()) {
-            throw new FileDeletionException(folder.getAbsolutePath() + "has not been deleted properly.");
+            if (!folder.delete()) {
+                throw new FileDeletionException(folder.toPath());
+            }
         }
     }
 
@@ -169,7 +173,7 @@ public final class ResourceUtil {
         try {
             deleteDirectoryTree(folder.toFile());
         } catch (IOException e) {
-            throw new FileDeletionException(folder.toAbsolutePath().toString() + "has not been deleted properly.");
+            throw new FileDeletionException(folder);
         }
     }
 

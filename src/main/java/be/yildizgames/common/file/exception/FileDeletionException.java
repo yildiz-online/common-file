@@ -25,6 +25,8 @@ package be.yildizgames.common.file.exception;
 
 import be.yildizgames.common.exception.technical.TechnicalException;
 
+import java.nio.file.Path;
+
 /**
  * This exception is thrown when a file could not be deleted successfully.
  */
@@ -53,5 +55,13 @@ public class FileDeletionException extends TechnicalException {
      */
     public FileDeletionException(String message) {
         super(message);
+    }
+
+    /**
+     * Build a new deletion exception with a message.
+     * @param path Message for this exceptionPath to use in the message.
+     */
+    public FileDeletionException(Path path) {
+        super(path.toAbsolutePath() + " has not been properly deleted.");
     }
 }

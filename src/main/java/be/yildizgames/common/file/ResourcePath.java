@@ -23,6 +23,7 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.implementation.ImplementationException;
 import be.yildizgames.common.util.StringUtil;
 
 import java.nio.file.Files;
@@ -41,9 +42,9 @@ public class ResourcePath {
 
     private ResourcePath(String name, String path, FileResource.FileType type) {
         super();
-        assert name != null;
-        assert path != null;
-        assert type != null;
+        ImplementationException.throwForNull(name);
+        ImplementationException.throwForNull(path);
+        ImplementationException.throwForNull(type);
         this.name = name;
         this.path = path;
         this.type = type;
