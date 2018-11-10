@@ -26,4 +26,5 @@ module be.yildizgames.common.file {
     requires be.yildizgames.common.util;
 
     exports be.yildizgames.common.file;
+    exports be.yildizgames.common.file.exception to be.yildizgames.common.file.xml;
 }
