@@ -24,6 +24,7 @@
 
 package be.yildizgames.common.file;
 
+import be.yildizgames.common.exception.implementation.ImplementationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -52,12 +53,12 @@ class ResourcePathTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> ResourcePath.vfs("test", null));
+            assertThrows(ImplementationException.class, () -> ResourcePath.vfs("test", null));
         }
 
         @Test
         void fromNameNull() {
-            assertThrows(AssertionError.class, () -> ResourcePath.vfs(null, "azerty"));
+            assertThrows(ImplementationException.class, () -> ResourcePath.vfs(null, "azerty"));
         }
     }
 
@@ -74,12 +75,12 @@ class ResourcePathTest {
 
         @Test
         void fromNull() {
-            assertThrows(AssertionError.class, () -> ResourcePath.directory("test", null));
+            assertThrows(ImplementationException.class, () -> ResourcePath.directory("test", null));
         }
 
         @Test
         void fromNameNull() {
-            assertThrows(AssertionError.class, () -> ResourcePath.directory(null, "azerty"));
+            assertThrows(ImplementationException.class, () -> ResourcePath.directory(null, "azerty"));
         }
     }
 
