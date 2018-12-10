@@ -24,8 +24,9 @@
 package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.exception.technical.ResourceCorruptedException;
-import be.yildizgames.common.exception.technical.ResourceMissingException;
+import be.yildizgames.common.file.exception.FileCorruptionException;
+import be.yildizgames.common.file.exception.FileCreationException;
+import be.yildizgames.common.file.exception.FileMissingException;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -105,7 +106,7 @@ public final class FileResource {
                 Files.createFile(resource.file);
             }
         } catch (IOException | SecurityException e) {
-            throw new ResourceMissingException("The file " + resource.file.toAbsolutePath().toString() + " could not be created.", e);
+            throw new FileCreationException("The file " + resource.file.toAbsolutePath().toString() + " could not be created.", e);
         }
         return resource;
     }
@@ -117,7 +118,7 @@ public final class FileResource {
         resource.file = Paths.get(sanitizedName);
         resource.name = sanitizedName;
         if (!resource.exists()) {
-            throw new ResourceMissingException("The file " + resource.file.toAbsolutePath().toString() + " does not exist.");
+            throw new FileMissingException("The file " + resource.file.toAbsolutePath().toString() + " does not exist.");
         }
         return resource;
     }
@@ -137,11 +138,11 @@ public final class FileResource {
         long expectedCrc = Long.parseLong(values[1]);
         long expectedSize = Long.parseLong(values[2]);
         if (!this.exists()) {
-            throw new ResourceMissingException("File does not exists");
+            throw new FileMissingException("File does not exists");
         } else if (this.getSize() != expectedSize) {
-            throw new ResourceCorruptedException("Size does not match");
+            throw new FileCorruptionException("Size does not match");
         } else if (this.crc32 != expectedCrc) {
-            throw new ResourceCorruptedException("Crc32 does not match");
+            throw new FileCorruptionException("Crc32 does not match");
         }
     }
 
@@ -210,7 +211,7 @@ public final class FileResource {
     public byte[] getBytesFromFile() {
         try (BufferedInputStream is = ResourceUtil.getInputStream(this.file)) {
             if (this.getSize() > Integer.MAX_VALUE) {
-                throw new ResourceCorruptedException("File too large");
+                throw new FileCorruptionException("File too large");
             }
 
             byte[] bytes = new byte[(int) this.getSize()];
@@ -230,7 +231,7 @@ public final class FileResource {
             }
             return bytes;
         } catch (IOException e) {
-            throw new ResourceCorruptedException(e);
+            throw new FileCorruptionException(e);
         }
     }
 

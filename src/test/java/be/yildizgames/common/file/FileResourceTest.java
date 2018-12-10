@@ -25,7 +25,7 @@
 package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.exception.technical.ResourceMissingException;
+import be.yildizgames.common.file.exception.FileMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ final class  FileResourceTest {
 
         @Test
         void notExisting() {
-            assertThrows(ResourceMissingException.class, () -> FileResource.findResource("azerty"));
+            assertThrows(FileMissingException.class, () -> FileResource.findResource("azerty"));
         }
 
         @Test

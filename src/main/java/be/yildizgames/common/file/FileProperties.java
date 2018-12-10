@@ -23,8 +23,8 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.technical.ResourceMissingException;
 import be.yildizgames.common.file.exception.FileCreationException;
+import be.yildizgames.common.file.exception.FileMissingException;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -61,7 +61,7 @@ public class FileProperties {
      * @param file Physical file containing the properties.
      * @param args Array of key=values to override the content retrieved from the file.
      * @return The properties from the file.
-     * @throws ResourceMissingException if the file does not exists.
+     * @throws FileMissingException if the file does not exists.
      */
     //@Requires ("file != null")
     //@Ensures ("result != null")
@@ -70,7 +70,7 @@ public class FileProperties {
         try (Reader reader = ResourceUtil.getFileReader(file)) {
             properties.load(reader);
         } catch (IOException ioe) {
-            throw new ResourceMissingException("Error while reading property file: " + file.toAbsolutePath().toString(), ioe);
+            throw new FileMissingException("Error while reading property file: " + file.toAbsolutePath().toString(), ioe);
         }
         if (args == null) {
             return properties;

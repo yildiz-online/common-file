@@ -24,7 +24,7 @@
 package be.yildizgames.common.file;
 
 import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.exception.technical.ResourceCorruptedException;
+import be.yildizgames.common.file.exception.FileCorruptionException;
 import be.yildizgames.common.file.exception.FileCreationException;
 import be.yildizgames.common.file.exception.FileDeletionException;
 
@@ -182,7 +182,7 @@ public final class ResourceUtil {
         try {
             return URLDecoder.decode(string, ResourceUtil.ENCODING.name());
         } catch (UnsupportedEncodingException e) {
-            throw new ResourceCorruptedException(e);
+            throw new FileCorruptionException(e);
         }
     }
 
