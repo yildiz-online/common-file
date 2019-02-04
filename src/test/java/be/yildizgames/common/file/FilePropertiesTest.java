@@ -25,5 +25,5 @@ package be.yildizgames.common.file;
 /**
  * @author Grégory Van den Borre
  */
-class FilePropertiesTest {
+public class FilePropertiesTest {
 }

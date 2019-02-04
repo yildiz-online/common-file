@@ -31,24 +31,24 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Grégory Van den Borre
  */
-class FileCreationExceptionTest {
+public class FileCreationExceptionTest {
 
     private static final String EXPECTED_NO_MESSAGE = "";
 
     private static final Throwable EXPECTED_NO_CAUSE = null;
 
     @Nested
-    class Constructor {
+    public class Constructor {
 
         @Test
-        void withMessage() {
+        public void withMessage() {
             FileCreationException e = new FileCreationException("myTest");
             Assertions.assertEquals("myTest", e.message);
             Assertions.assertEquals(EXPECTED_NO_CAUSE, e.getCause());
         }
 
         @Test
-        void withCause() {
+        public void withCause() {
             Exception root = new RuntimeException("cause");
             FileCreationException e = new FileCreationException(root);
             Assertions.assertEquals(root, e.getCause());
@@ -56,7 +56,7 @@ class FileCreationExceptionTest {
         }
 
         @Test
-        void withMessageAndCause() {
+        public void withMessageAndCause() {
             Exception root = new RuntimeException("cause");
             FileCreationException e = new FileCreationException("myTest", root);
             Assertions.assertEquals(root, e.getCause());

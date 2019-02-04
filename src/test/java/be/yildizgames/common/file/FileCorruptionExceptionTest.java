@@ -31,24 +31,24 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Grégory Van den Borre
  */
-class FileCorruptionExceptionTest {
+public class FileCorruptionExceptionTest {
 
     private static final String EXPECTED_NO_MESSAGE = "";
 
     private static final Throwable EXPECTED_NO_CAUSE = null;
 
     @Nested
-    class Constructor {
+    public class Constructor {
 
         @Test
-        void withMessage() {
+        public void withMessage() {
             FileCorruptionException e = new FileCorruptionException("myTest");
             Assertions.assertEquals("myTest", e.message);
             Assertions.assertEquals(EXPECTED_NO_CAUSE, e.getCause());
         }
 
         @Test
-        void withCause() {
+        public void withCause() {
             Exception root = new RuntimeException("cause");
             FileCorruptionException e = new FileCorruptionException(root);
             Assertions.assertEquals(root, e.getCause());
@@ -56,7 +56,7 @@ class FileCorruptionExceptionTest {
         }
 
         @Test
-        void withMessageAndCause() {
+        public void withMessageAndCause() {
             Exception root = new RuntimeException("cause");
             FileCorruptionException e = new FileCorruptionException("myTest", root);
             Assertions.assertEquals(root, e.getCause());
