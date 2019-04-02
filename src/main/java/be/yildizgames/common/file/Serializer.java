@@ -44,5 +44,4 @@ public interface Serializer<T> {
      * @param o Object to serialize.
      */
     void writeToFile(final T o);
-
 }

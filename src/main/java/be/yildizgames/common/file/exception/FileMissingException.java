@@ -29,6 +29,7 @@ import java.nio.file.Path;
 
 /**
  * This exception is thrown when a file is missing.
+ * @author Grégory Van den Borre
  */
 public class FileMissingException extends TechnicalException {
 

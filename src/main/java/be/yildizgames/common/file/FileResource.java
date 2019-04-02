@@ -182,7 +182,6 @@ public final class FileResource {
         } catch (IOException e) {
             return 0L;
         }
-
     }
 
     /**

@@ -198,6 +198,5 @@ public final class  FileResourceTest {
             Assertions.assertEquals(2, FileResource.FileType.VFS.value);
             Assertions.assertEquals(3, FileResource.FileType.DIRECTORY.value);
         }
-
     }
 }

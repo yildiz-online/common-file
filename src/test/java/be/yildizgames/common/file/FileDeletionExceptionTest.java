@@ -62,7 +62,5 @@ public class FileDeletionExceptionTest {
             Assertions.assertEquals(root, e.getCause());
             Assertions.assertEquals("myTest", e.message);
         }
-
     }
-
 }

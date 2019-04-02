@@ -78,11 +78,11 @@ public class ResourcePath {
         return this.type;
     }
 
-    public boolean exists() {
+    public final boolean exists() {
         return Files.exists(Paths.get(this.path));
     }
 
-    public boolean exists(String file) {
+    public final boolean exists(String file) {
         assert file != null;
         return this.type == FileResource.FileType.VFS || Files.exists(Paths.get(this.path, file));
     }

@@ -27,6 +27,7 @@ import be.yildizgames.common.exception.technical.TechnicalException;
 
 /**
  * This exception is thrown when a file is corrupted.
+ * @author Grégory Van den Borre
  */
 public class FileCorruptionException extends TechnicalException {
 

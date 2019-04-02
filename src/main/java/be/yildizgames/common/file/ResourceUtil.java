@@ -190,3 +190,4 @@ public final class ResourceUtil {
         return Paths.get(clazz.getClassLoader().getResource(name).toURI()).toAbsolutePath();
     }
 }
+

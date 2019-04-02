@@ -21,6 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  SOFTWARE.
  */
 
+/**
+ * @author Grégory Van den Borre
+ */
 module be.yildizgames.common.file {
     requires be.yildizgames.common.exception;
     requires be.yildizgames.common.util;

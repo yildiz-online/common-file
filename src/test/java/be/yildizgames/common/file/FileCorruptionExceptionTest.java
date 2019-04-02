@@ -62,7 +62,5 @@ public class FileCorruptionExceptionTest {
             Assertions.assertEquals(root, e.getCause());
             Assertions.assertEquals("myTest", e.message);
         }
-
     }
-
 }

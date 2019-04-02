@@ -115,5 +115,5 @@ public class ResourcePathTest {
     private static File getFile(String name) {
         return new File(ResourcePath.class.getClassLoader().getResource(name).getFile()).getAbsoluteFile();
     }
-
 }
+

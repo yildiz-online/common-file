@@ -27,6 +27,7 @@ import be.yildizgames.common.exception.technical.TechnicalException;
 
 /**
  * This exception is thrown when a file could not be created successfully.
+ * @author Grégory Van den Borre
  */
 public class FileCreationException extends TechnicalException {
 
