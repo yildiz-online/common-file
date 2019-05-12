@@ -199,4 +199,5 @@ public final class  FileResourceTest {
             Assertions.assertEquals(3, FileResource.FileType.DIRECTORY.value);
         }
     }
+
 }

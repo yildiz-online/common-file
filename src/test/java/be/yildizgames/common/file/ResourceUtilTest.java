@@ -123,5 +123,6 @@ public class ResourceUtilTest {
             assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectory((Path)null));
         }
     }
+
 }
 

@@ -27,6 +27,7 @@ package be.yildizgames.common.file;
  * Serialize and deserialize objects from files.
  *
  * @param <T> Object type to use.
+ *
  * @author Grégory Van den Borre
  */
 public interface Serializer<T> {

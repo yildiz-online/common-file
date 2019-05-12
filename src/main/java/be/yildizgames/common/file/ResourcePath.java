@@ -70,6 +70,10 @@ public class ResourcePath {
         return this.name;
     }
 
+    /**
+     * Provide the path.
+     * @return The path.
+     */
     public final String getPath() {
         return this.path;
     }

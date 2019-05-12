@@ -104,4 +104,5 @@ public class FileProperties {
             throw new FileCreationException("Configuration could not be saved in file " + file.toAbsolutePath().toString(), e);
         }
     }
+
 }

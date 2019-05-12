@@ -40,6 +40,7 @@ import java.util.zip.CRC32;
 
 /**
  * A file resource represent a file and provide functions to manipulate it.
+ *
  * @author Grégory Van den Borre
  */
 public final class FileResource {

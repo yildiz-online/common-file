@@ -29,6 +29,7 @@ import java.nio.file.Path;
 
 /**
  * This exception is thrown when a file could not be deleted successfully.
+ *
  * @author Grégory Van den Borre
  */
 public class FileDeletionException extends TechnicalException {

@@ -28,13 +28,7 @@ import be.yildizgames.common.file.exception.FileCorruptionException;
 import be.yildizgames.common.file.exception.FileCreationException;
 import be.yildizgames.common.file.exception.FileDeletionException;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
