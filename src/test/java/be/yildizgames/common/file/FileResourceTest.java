@@ -24,8 +24,6 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.file.exception.FileMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,12 +58,12 @@ public final class  FileResourceTest {
 
         @Test
         public void notExisting() {
-            assertThrows(FileMissingException.class, () -> FileResource.findResource("azerty"));
+            assertThrows(IllegalStateException.class, () -> FileResource.findResource("azerty"));
         }
 
         @Test
         public void fromNull() {
-            assertThrows(ImplementationException.class, () -> FileResource.findResource(null));
+            assertThrows(NullPointerException.class, () -> FileResource.findResource(null));
         }
     }
 
@@ -84,7 +82,7 @@ public final class  FileResourceTest {
 
         @Test
         public void fromNull() {
-            assertThrows(ImplementationException.class, () -> FileResource.createFile((Path)null));
+            assertThrows(NullPointerException.class, () -> FileResource.createFile((Path)null));
         }
 
         @Test
@@ -114,7 +112,7 @@ public final class  FileResourceTest {
 
         @Test
         public void fromNull() {
-            assertThrows(ImplementationException.class, () -> FileResource.createDirectory((Path)null));
+            assertThrows(NullPointerException.class, () -> FileResource.createDirectory((Path)null));
         }
 
         @Test
@@ -153,12 +151,12 @@ public final class  FileResourceTest {
 
         @Test
         public void fromNullName() {
-            assertThrows(ImplementationException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
+            assertThrows(NullPointerException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
         }
 
         @Test
         public void fromNullType() {
-            assertThrows(ImplementationException.class, () -> FileResource.createFileResource("ok", null));
+            assertThrows(NullPointerException.class, () -> FileResource.createFileResource("ok", null));
         }
     }
 

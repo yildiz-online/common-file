@@ -23,9 +23,6 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.file.exception.FileCreationException;
-import be.yildizgames.common.file.exception.FileMissingException;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -50,7 +47,7 @@ public class FileProperties {
             try {
                 Files.createFile(file);
             } catch (IOException e) {
-                throw new FileCreationException("Cannot create file " + file.toString());
+                throw new IllegalStateException("Cannot create file " + file.toString());
             }
 
         }
@@ -64,7 +61,6 @@ public class FileProperties {
      * @param file Physical file containing the properties.
      * @param args Array of key=values to override the content retrieved from the file.
      * @return The properties from the file.
-     * @throws FileMissingException if the file does not exists.
      */
     //@Requires ("file != null")
     //@Ensures ("result != null")
@@ -73,7 +69,7 @@ public class FileProperties {
         try (Reader reader = ResourceUtil.getFileReader(file)) {
             properties.load(reader);
         } catch (IOException ioe) {
-            throw new FileMissingException("Error while reading property file: " + file.toAbsolutePath().toString(), ioe);
+            throw new IllegalStateException("Error while reading property file: " + file.toAbsolutePath().toString(), ioe);
         }
         if (args == null) {
             return properties;
@@ -101,7 +97,7 @@ public class FileProperties {
             Files.createFile(file);
             p.store(fileWriter, "");
         } catch (IOException e) {
-            throw new FileCreationException("Configuration could not be saved in file " + file.toAbsolutePath().toString(), e);
+            throw new IllegalStateException("Configuration could not be saved in file " + file.toAbsolutePath().toString(), e);
         }
     }
 

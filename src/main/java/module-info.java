@@ -25,9 +25,6 @@
  * @author Grégory Van den Borre
  */
 module be.yildizgames.common.file {
-    requires be.yildizgames.common.exception;
-    requires be.yildizgames.common.util;
 
     exports be.yildizgames.common.file;
-    exports be.yildizgames.common.file.exception;
 }

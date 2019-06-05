@@ -23,12 +23,13 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.file.exception.FileCorruptionException;
-import be.yildizgames.common.file.exception.FileCreationException;
-import be.yildizgames.common.file.exception.FileDeletionException;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -37,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -121,16 +123,16 @@ public final class ResourceUtil {
     }
 
     public static void createDirectoryTree(final String path) {
-        ImplementationException.throwForNull(path);
+        Objects.requireNonNull(path);
         Path file = Paths.get(path);
         if (Files.exists(file) && !Files.isDirectory(file)) {
-            throw FileCreationException.directoryErrorFileAlreadyExists(path);
+            throw new IllegalStateException("The file " + file + " already exists in this directory");
         }
         if (Files.notExists(file)) {
             try {
                 Files.createDirectories(file);
             } catch (IOException e) {
-                throw new FileCreationException("Directories were not created successfully for " + path, e);
+                throw new IllegalStateException("Directories were not created successfully for " + path, e);
             }
         }
     }
@@ -148,12 +150,12 @@ public final class ResourceUtil {
                     ResourceUtil.deleteDirectoryTree(f);
                 } else {
                     if (!f.delete()) {
-                        throw new FileDeletionException(f.toPath());
+                        throw new IllegalStateException("Cannot delete " + f.toPath());
                     }
                 }
             }
             if (!folder.delete()) {
-                throw new FileDeletionException(folder.toPath());
+                throw new IllegalStateException("Cannot delete " + folder.toPath());
             }
         }
     }
@@ -167,17 +169,12 @@ public final class ResourceUtil {
         try {
             deleteDirectoryTree(folder.toFile());
         } catch (IOException e) {
-            throw new FileDeletionException(folder);
+            throw new IllegalStateException("Cannot delete " + folder);
         }
     }
 
     public static String decode(String string) {
-        //FIXME remove .name() once in java 10+
-        try {
-            return URLDecoder.decode(string, ResourceUtil.ENCODING.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new FileCorruptionException(e);
-        }
+        return URLDecoder.decode(string, ResourceUtil.ENCODING);
     }
 
     public static Path getFileFromClassPath(Class clazz, String name) throws URISyntaxException {

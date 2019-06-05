@@ -23,11 +23,10 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.util.StringUtil;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author Grégory Van den Borre
@@ -42,9 +41,9 @@ public class ResourcePath {
 
     private ResourcePath(String name, String path, FileResource.FileType type) {
         super();
-        ImplementationException.throwForNull(name);
-        ImplementationException.throwForNull(path);
-        ImplementationException.throwForNull(type);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(type);
         this.name = name;
         this.path = path;
         this.type = type;
@@ -63,7 +62,7 @@ public class ResourcePath {
     }
 
     public static ResourcePath currentDirectory() {
-        return currentDirectory(StringUtil.buildRandomString("resourcePath"));
+        return currentDirectory("resourcePath_" + UUID.randomUUID().toString());
     }
 
     public final String getName() {

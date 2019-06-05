@@ -23,11 +23,6 @@
 
 package be.yildizgames.common.file;
 
-import be.yildizgames.common.exception.implementation.ImplementationException;
-import be.yildizgames.common.file.exception.FileCorruptionException;
-import be.yildizgames.common.file.exception.FileCreationException;
-import be.yildizgames.common.file.exception.FileMissingException;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -36,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.CRC32;
 
 /**
@@ -84,13 +80,12 @@ public final class FileResource {
     }
 
     public static FileResource createFileResource(final Path path, final FileType type) {
-        ImplementationException.throwForNull(path);
         return createFileResource(path.toAbsolutePath().toString(), type);
     }
 
     public static FileResource createFileResource(final String name, final FileType type) {
-        ImplementationException.throwForNull(name);
-        ImplementationException.throwForNull(type);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(type);
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
         resource.name = sanitizedName;
@@ -107,19 +102,19 @@ public final class FileResource {
                 Files.createFile(resource.file);
             }
         } catch (IOException | SecurityException e) {
-            throw new FileCreationException("The file " + resource.file.toAbsolutePath().toString() + " could not be created.", e);
+            throw new IllegalStateException("The file " + resource.file.toAbsolutePath().toString() + " could not be created.", e);
         }
         return resource;
     }
 
     public static FileResource findResource(final String name) {
-        ImplementationException.throwForNull(name);
+        Objects.requireNonNull(name);
         FileResource resource = new FileResource();
         String sanitizedName = ResourceUtil.decode(name);
         resource.file = Paths.get(sanitizedName);
         resource.name = sanitizedName;
         if (!resource.exists()) {
-            throw new FileMissingException("The file " + resource.file.toAbsolutePath().toString() + " does not exist.");
+            throw new IllegalStateException("The file " + resource.file.toAbsolutePath().toString() + " does not exist.");
         }
         return resource;
     }
@@ -139,11 +134,11 @@ public final class FileResource {
         long expectedCrc = Long.parseLong(values[1]);
         long expectedSize = Long.parseLong(values[2]);
         if (!this.exists()) {
-            throw new FileMissingException("File does not exists");
+            throw new IllegalStateException("File does not exists");
         } else if (this.getSize() != expectedSize) {
-            throw new FileCorruptionException("Size does not match");
+            throw new IllegalStateException("Size does not match");
         } else if (this.crc32 != expectedCrc) {
-            throw new FileCorruptionException("Crc32 does not match");
+            throw new IllegalStateException("Crc32 does not match");
         }
     }
 
@@ -211,7 +206,7 @@ public final class FileResource {
     public byte[] getBytesFromFile() {
         try (BufferedInputStream is = ResourceUtil.getInputStream(this.file)) {
             if (this.getSize() > Integer.MAX_VALUE) {
-                throw new FileCorruptionException("File too large");
+                throw new IllegalStateException("File too large");
             }
 
             byte[] bytes = new byte[(int) this.getSize()];
@@ -231,7 +226,7 @@ public final class FileResource {
             }
             return bytes;
         } catch (IOException e) {
-            throw new FileCorruptionException(e);
+            throw new IllegalStateException(e);
         }
     }
 
