@@ -120,7 +120,7 @@ public class ResourceUtilTest {
 
         @Test
         public void withNull() {
-            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectory((Path)null));
+            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectory(null));
         }
     }
 
