@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -48,6 +49,8 @@ import java.util.stream.Stream;
  * @author Grégory Van den Borre
  */
 public final class ResourceUtil {
+
+    private static final System.Logger LOGGER = System.getLogger(ResourceUtil.class.getName());
 
     /**
      * Encoding to use.
@@ -179,6 +182,58 @@ public final class ResourceUtil {
 
     public static Path getFileFromClassPath(Class clazz, String name) throws URISyntaxException {
         return Paths.get(clazz.getClassLoader().getResource(name).toURI()).toAbsolutePath();
+    }
+
+    public static Stream<Path> getFilesInDirectory(Path directory) {
+        if(Files.exists(directory)) {
+            try {
+                return Files.walk(directory);
+            } catch (IOException e) {
+                LOGGER.log(System.Logger.Level.ERROR, e);
+            }
+        } else {
+            LOGGER.log(System.Logger.Level.WARNING, "Directory {0} does not exists.", directory);
+        }
+        return Stream.<Path>builder().build();
+    }
+
+    public static List<String> readAllLines(Path file) {
+        if(Files.notExists(file)) {
+            LOGGER.log(System.Logger.Level.WARNING, "File {0} does not exists", file);
+            return List.of();
+        }
+        try {
+            return Files.readAllLines(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            LOGGER.log(System.Logger.Level.ERROR, "Error reading file", e);
+            return List.of();
+        }
+    }
+
+    public static void writeAllLines(Path path, List<String> lines) {
+        if(Files.notExists(path.getParent())) {
+            try {
+                Files.createDirectories(path.getParent());
+            } catch (IOException e) {
+                LOGGER.log(System.Logger.Level.ERROR, e);
+            }
+        }
+        try {
+            if(Files.notExists(path)) {
+                Files.createFile(path);
+            }
+            Files.writeString(path, lines.stream().collect(Collectors.joining("\n", "", "")), StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            LOGGER.log(System.Logger.Level.ERROR, e);
+        }
+    }
+
+    public static void addLine(Path file, String line) {
+        try {
+            Files.writeString(file, line, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            LOGGER.log(System.Logger.Level.ERROR, e);
+        }
     }
 }
 
