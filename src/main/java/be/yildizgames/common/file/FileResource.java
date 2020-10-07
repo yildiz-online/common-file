@@ -200,9 +200,11 @@ public final class FileResource {
 
     /**
      * Build a byte[] from the file wrapped in this object.
+     * @deprecated use Files.reallAllBytes instead.
      *
      * @return the byte[] if not problem occurred, null otherwise.
      */
+    @Deprecated
     public byte[] getBytesFromFile() {
         try (BufferedInputStream is = ResourceUtil.getInputStream(this.file)) {
             if (this.getSize() > Integer.MAX_VALUE) {
