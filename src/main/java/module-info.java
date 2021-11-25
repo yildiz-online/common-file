@@ -24,7 +24,7 @@
 /**
  * @author Grégory Van den Borre
  */
-module be.yildizgames.common.file {
+open module be.yildizgames.common.file {
 
     exports be.yildizgames.common.file;
 }
