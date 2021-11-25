@@ -40,10 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ResourcePathTest {
 
     @Nested
-    public class Vfs {
+    class Vfs {
 
         @Test
-        public void happyFlow() {
+        void happyFlow() {
             ResourcePath p = ResourcePath.vfs("test", "azerty");
             assertEquals(FileResource.FileType.VFS, p.getType());
             assertEquals("azerty", p.getPath());
@@ -51,21 +51,21 @@ public class ResourcePathTest {
         }
 
         @Test
-        public void fromNull() {
+        void fromNull() {
             assertThrows(NullPointerException.class, () -> ResourcePath.vfs("test", null));
         }
 
         @Test
-        public void fromNameNull() {
+        void fromNameNull() {
             assertThrows(NullPointerException.class, () -> ResourcePath.vfs(null, "azerty"));
         }
     }
 
     @Nested
-    public class Directory {
+    class Directory {
 
         @Test
-        public void happyFlow() {
+        void happyFlow() {
             ResourcePath p = ResourcePath.directory("test", "azerty");
             assertEquals(FileResource.FileType.DIRECTORY, p.getType());
             assertEquals("azerty", p.getPath());
@@ -73,39 +73,39 @@ public class ResourcePathTest {
         }
 
         @Test
-        public void fromNull() {
+        void fromNull() {
             assertThrows(NullPointerException.class, () -> ResourcePath.directory("test", null));
         }
 
         @Test
-        public void fromNameNull() {
+        void fromNameNull() {
             assertThrows(NullPointerException.class, () -> ResourcePath.directory(null, "azerty"));
         }
     }
 
     @Nested
-    public class Exists {
+    class Exists {
 
         @Test
-        public void exists() {
+        void exists() {
             ResourcePath p = ResourcePath.directory("test", getFile("test.properties").getParentFile().getAbsolutePath());
             assertTrue(p.exists("test.properties"));
         }
 
         @Test
-        public void existsVfs() {
+        void existsVfs() {
             ResourcePath p = ResourcePath.vfs("test", "any");
             assertTrue(p.exists("any"));
         }
 
         @Test
-        public void doesNotExist() {
+        void doesNotExist() {
             ResourcePath p = ResourcePath.directory("test", getFile("test.properties").getParentFile().getAbsolutePath());
             assertFalse(p.exists("ttest.properties"));
         }
 
         @Test
-        public void withNull() {
+        void withNull() {
             ResourcePath p = ResourcePath.directory("test", "azerty");
             assertThrows(AssertionError.class, () -> p.exists(null));
         }

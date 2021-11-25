@@ -146,7 +146,9 @@ public final class FileResource {
      * Compute the file CRC32.
      *
      * @return The computed value.
+     * @deprecated Use common hash
      */
+    @Deprecated
     private long computeCrc() {
         CRC32 c = new CRC32();
         c.update(this.getBytesFromFile());

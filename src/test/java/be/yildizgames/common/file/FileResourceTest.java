@@ -49,29 +49,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public final class  FileResourceTest {
 
     @Nested
-    public class FindResource {
+    class FindResource {
 
         @Test
-        public void happyFlow() throws URISyntaxException {
+        void happyFlow() throws URISyntaxException {
             FileResource.findResource(ResourceUtil.getFileFromClassPath(this.getClass(), "file with space.txt").toString());
         }
 
         @Test
-        public void notExisting() {
+        void notExisting() {
             assertThrows(IllegalStateException.class, () -> FileResource.findResource("azerty"));
         }
 
         @Test
-        public void fromNull() {
+        void fromNull() {
             assertThrows(NullPointerException.class, () -> FileResource.findResource(null));
         }
     }
 
     @Nested
-    public class createFile {
+    class createFile {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path file = folder.resolve("test.txt");
             assertFalse(Files.exists(file));
@@ -81,13 +81,13 @@ public final class  FileResourceTest {
         }
 
         @Test
-        public void fromNull() {
-            assertThrows(NullPointerException.class, () -> FileResource.createFile((Path)null));
+        void fromNull() {
+            assertThrows(NullPointerException.class, () -> FileResource.createFile((Path) null));
         }
 
         @Test
-        public void alreadyExisting() throws IOException, URISyntaxException {
-            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"test-resource.txt");
+        void alreadyExisting() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(), "test-resource.txt");
             assertTrue(Files.exists(file));
             long size = Files.size(file);
             FileResource f = FileResource.createFile(file);
@@ -98,10 +98,10 @@ public final class  FileResourceTest {
     }
 
     @Nested
-    public class createDirectory {
+    class createDirectory {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path file = folder.resolve("test");
             assertFalse(Files.exists(file));
@@ -111,12 +111,12 @@ public final class  FileResourceTest {
         }
 
         @Test
-        public void fromNull() {
-            assertThrows(NullPointerException.class, () -> FileResource.createDirectory((Path)null));
+        void fromNull() {
+            assertThrows(NullPointerException.class, () -> FileResource.createDirectory((Path) null));
         }
 
         @Test
-        public void alreadyExisting() throws IOException {
+        void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
             assertTrue(Files.exists(folder));
             FileResource.createDirectory(folder);
@@ -126,11 +126,11 @@ public final class  FileResourceTest {
     }
 
     @Nested
-    public class createResource {
+    class createResource {
 
         @Test
-        public void file() throws IOException, URISyntaxException {
-            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"test-resource.txt");
+        void file() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(), "test-resource.txt");
             assertTrue(Files.exists(file));
             long size = Files.size(file);
             FileResource f = FileResource.createFileResource(file, FileResource.FileType.FILE);
@@ -140,7 +140,7 @@ public final class  FileResourceTest {
         }
 
         @Test
-        public void directory() throws IOException {
+        void directory() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path file = folder.resolve("test");
             assertFalse(Files.exists(file));
@@ -150,22 +150,22 @@ public final class  FileResourceTest {
         }
 
         @Test
-        public void fromNullName() {
-            assertThrows(NullPointerException.class, () -> FileResource.createFileResource((Path)null, FileResource.FileType.FILE));
+        void fromNullName() {
+            assertThrows(NullPointerException.class, () -> FileResource.createFileResource((Path) null, FileResource.FileType.FILE));
         }
 
         @Test
-        public void fromNullType() {
+        void fromNullType() {
             assertThrows(NullPointerException.class, () -> FileResource.createFileResource("ok", null));
         }
     }
 
     @Nested
-    public class ListFile {
+    class ListFile {
 
         @Test
-        public void happyFlow() throws IOException, URISyntaxException {
-            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"fileresource-listfiles");
+        void happyFlow() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(), "fileresource-listfiles");
             FileResource f = FileResource.findResource(file.toString());
             List<FileResource> result = f.listFile();
             assertEquals(2, result.size());
@@ -177,20 +177,20 @@ public final class  FileResourceTest {
         }
 
         @Test
-        public void withIgnoredFile() throws IOException, URISyntaxException {
-            Path file = ResourceUtil.getFileFromClassPath(this.getClass(),"fileresource-listfiles");
+        void withIgnoredFile() throws IOException, URISyntaxException {
+            Path file = ResourceUtil.getFileFromClassPath(this.getClass(), "fileresource-listfiles");
             FileResource f = FileResource.findResource(file.toString());
-            List<FileResource> result = f.listFile( "file1.txt");
+            List<FileResource> result = f.listFile("file1.txt");
             assertEquals(1, result.size());
             assertEquals(file + FileSystems.getDefault().getSeparator() + "file2.txt", result.get(0).getName());
         }
     }
 
     @Nested
-    public class FileTypeEnum {
+    class FileTypeEnum {
 
         @Test
-        public void happyFlow() {
+        void happyFlow() {
             Assertions.assertEquals(0, FileResource.FileType.FILE.value);
             Assertions.assertEquals(1, FileResource.FileType.ZIP.value);
             Assertions.assertEquals(2, FileResource.FileType.VFS.value);

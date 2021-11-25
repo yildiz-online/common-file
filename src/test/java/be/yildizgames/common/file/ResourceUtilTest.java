@@ -41,10 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ResourceUtilTest {
 
     @Nested
-    public class CreateDirectoryTree {
+    class CreateDirectoryTree {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("test").resolve("dir");
             ResourceUtil.createDirectoryTree(folderToTest);
@@ -52,7 +52,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withSpace() throws IOException {
+        void withSpace() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("tes t").resolve("dir");
             ResourceUtil.createDirectoryTree(folderToTest);
@@ -60,7 +60,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withDot() throws IOException {
+        void withDot() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("te.st").resolve("dir");
             ResourceUtil.createDirectoryTree(folderToTest);
@@ -68,7 +68,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void alreadyExisting() throws IOException {
+        void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("test").resolve("exist");
             ResourceUtil.createDirectoryTree(folderToTest);
@@ -77,16 +77,16 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withNull() {
-            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectoryTree((Path)null));
+        void withNull() {
+            assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectoryTree((Path) null));
         }
     }
 
     @Nested
-    public class CreateDirectory {
+    class CreateDirectory {
 
         @Test
-        public void happyFlow() throws IOException {
+        void happyFlow() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("test");
             ResourceUtil.createDirectory(folderToTest);
@@ -94,7 +94,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withSpace() throws IOException {
+        void withSpace() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("tes t");
             ResourceUtil.createDirectory(folderToTest);
@@ -102,7 +102,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withDot() throws IOException {
+        void withDot() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("te.st");
             ResourceUtil.createDirectory(folderToTest);
@@ -110,7 +110,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void alreadyExisting() throws IOException {
+        void alreadyExisting() throws IOException {
             Path folder = Files.createTempDirectory("test");
             Path folderToTest = folder.resolve("exists");
             ResourceUtil.createDirectory(folderToTest);
@@ -119,7 +119,7 @@ public class ResourceUtilTest {
         }
 
         @Test
-        public void withNull() {
+        void withNull() {
             assertThrows(NullPointerException.class, () -> ResourceUtil.createDirectory(null));
         }
     }
